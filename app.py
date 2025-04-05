@@ -149,8 +149,11 @@ api_key = os.getenv("GEMINI_API_KEY")
 if api_key is None:
     raise ValueError("GEMINI_API_KEY not found in environment variables.")
 
-client = genai.Client(api_key=api_key)
+# Configure the Gemini API
+genai.configure(api_key=api_key)
 
+# Initialize the model
+model = genai.GenerativeModel('gemini-pro')
 
 #header
 
@@ -207,14 +210,14 @@ with st.sidebar:
     st.markdown('</div>', unsafe_allow_html=True)
 
 if submit:
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=["""Write a blog in human tone about {} with the keyword {}. Format it in Markdown with:
+    # Generate the blog content
+    response = model.generate_content(
+        """Write a blog in human tone about {} with the keyword {}. Format it in Markdown with:
         - Title in **bold** at the top
         - Important points and key concepts in **bold**
         - A length of approximately {} words
         - Natural paragraph breaks
-        Begin with '# **{title}**' and make sure to emphasize key ideas by wrapping them in **asterisks**.""".format(blog_title, keyword, size, title=blog_title)],
+        Begin with '# **{title}**' and make sure to emphasize key ideas by wrapping them in **asterisks**.""".format(blog_title, keyword, size, title=blog_title)
     )
     # Display the response in the Streamlit app
     st.subheader("Generated Blog: ")
